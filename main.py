@@ -54,9 +54,16 @@ def load_github_token() -> str:
     file = os.path.join(
         click.get_app_dir("githubber", roaming=True), "config", "account.json"
     )
-    with open(file, "r") as jsonfile:
-        data = json.load(jsonfile)
-    return data["github_token"]
+    try:
+        with open(file, "r") as jsonfile:
+            token = json.load(jsonfile)["github_token"]
+    except FileNotFoundError:
+        raise click.FileError(
+            file,
+            hint="File account.json not found!",
+        )
+
+    return token
 
 
 if __name__ == "__main__":
